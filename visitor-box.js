@@ -1,5 +1,5 @@
 (function () {
-    // 插入 CSS 样式
+    // ---- 插入 CSS ----
     const style = document.createElement("style");
     style.textContent = `
     /* 桌面小窗（毛玻璃） */
@@ -41,10 +41,9 @@
         font-size: 16px;
         color: #666;
     }
-    .visitor-close:hover {
-        color: #000;
-    }
-    /* 桌面按钮（🗺️ 小方块 40px） */
+    .visitor-close:hover { color: #000; }
+
+    /* 桌面按钮 */
     .visitor-btn {
         position: fixed;
         bottom: 20px;
@@ -62,10 +61,9 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         transition: transform 0.2s;
     }
-    .visitor-btn:hover {
-        transform: scale(1.1);
-    }
-    /* 移动端毛玻璃访客卡片 */
+    .visitor-btn:hover { transform: scale(1.1); }
+
+    /* 移动端毛玻璃卡片 */
     #visitor-mobile { 
         display: none;
         background: rgba(255, 255, 255, 0.6);
@@ -79,14 +77,12 @@
         font-size: 14px;
         line-height: 1.6;
         color: #111;
-    }
-    `;
+    }`;
     document.head.appendChild(style);
 
-    // 插入 HTML
+    // ---- 插入 DOM ----
     const container = document.createElement("div");
     container.innerHTML = `
-    <!-- 桌面访客小窗 -->
     <div id="visitor-box" class="visitor-box">
         <div class="visitor-header">
             <span>🗺️ 访客信息</span>
@@ -99,9 +95,7 @@
         <p><strong>IP:</strong> <span id="visitor-ip">Loading...</span></p>
         <p><strong>ASN:</strong> <span id="visitor-asn">Loading...</span></p>
     </div>
-    <!-- 桌面按钮 -->
     <div id="visitor-btn" class="visitor-btn">🗺️</div>
-    <!-- 移动端毛玻璃卡片 -->
     <div id="visitor-mobile">
         <p><strong>Country:</strong> <span id="mobile-country">Loading...</span></p>
         <p><strong>Date:</strong> <span id="mobile-date"></span></p>
@@ -113,36 +107,34 @@
     `;
     document.body.appendChild(container);
 
-    // 设备判断
+    // ---- 脚本功能 ----
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
     const btn = document.getElementById('visitor-btn');
     const box = document.getElementById('visitor-box');
     const mobileBox = document.getElementById('visitor-mobile');
     const closeBtn = document.getElementById('visitor-close');
 
-    if (!isMobile && btn) {
+    if (!isMobile) {
         btn.style.display = "flex";
-        btn.addEventListener('click', () => {
-            box.classList.toggle("show");
-        });
-        closeBtn.addEventListener('click', () => {
-            box.classList.remove("show");
-        });
+        btn.addEventListener('click', () => box.classList.toggle("show"));
+        closeBtn.addEventListener('click', () => box.classList.remove("show"));
     } else {
         btn.style.display = "none";
         box.style.display = "none";
         mobileBox.style.display = "block";
     }
 
-    // 日期
     function formatDate() {
-        const now = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        return now.toLocaleDateString('en-US', options);
-    }
+    const now = new Date();
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    };
+    return now.toLocaleDateString('zh-CN', options);
+}
 
-    // 系统 & 浏览器
     function getSystemInfo() {
         const ua = navigator.userAgent;
         let os = "Unknown OS";
@@ -153,9 +145,9 @@
         else if (/iPhone|iPad/.test(ua)) os = "iOS";
 
         let browser = "Unknown Browser";
-        if (ua.indexOf("Edg/") !== -1) browser = "Edge " + ua.match(/Edg\\/([\\d\\.]+)/)[1];
-        else if (ua.indexOf("Chrome/") !== -1) browser = "Chrome " + ua.match(/Chrome\\/([\\d\\.]+)/)[1];
-        else if (ua.indexOf("Firefox/") !== -1) browser = "Firefox " + ua.match(/Firefox\\/([\\d\\.]+)/)[1];
+        if (ua.indexOf("Edg/") !== -1) browser = "Edge " + ua.match(/Edg\/([\d\.]+)/)[1];
+        else if (ua.indexOf("Chrome/") !== -1) browser = "Chrome " + ua.match(/Chrome\/([\d\.]+)/)[1];
+        else if (ua.indexOf("Firefox/") !== -1) browser = "Firefox " + ua.match(/Firefox\/([\d\.]+)/)[1];
         else if (ua.indexOf("Safari/") !== -1) browser = "Safari";
 
         return { os, browser };
@@ -163,11 +155,7 @@
 
     function getFlagEmoji(countryCode) {
         if (!countryCode) return "🏳️";
-        return countryCode
-            .toUpperCase()
-            .replace(/./g, char =>
-                String.fromCodePoint(127397 + char.charCodeAt())
-            );
+        return countryCode.toUpperCase().replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt()));
     }
 
     const { os, browser } = getSystemInfo();
@@ -178,12 +166,11 @@
     document.getElementById("mobile-os").innerText = os;
     document.getElementById("mobile-browser").innerText = browser;
 
-    // IP & ASN
     fetch("https://ipapi.co/json/")
         .then(res => res.json())
         .then(data => {
             const flag = getFlagEmoji(data.country);
-            const country = \`\${flag} \${data.country_name} (\${data.country})\`;
+            const country = `${flag} ${data.country_name} (${data.country})`;
             const ip = data.ip;
             const asn = data.org || "N/A";
 
