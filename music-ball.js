@@ -52,7 +52,7 @@
 #music-info { color: #000; font-size: 14px; margin-top: 4px; text-align: center; word-break: break-word; }
 #progress-bar { width:100%;height:4px;background:rgba(255,255,255,0.3);margin-top:8px;border-radius:2px;overflow:hidden; }
 #progress { width:0;height:100%;background:#4caf50;border-radius:2px; }
-#lyrics { max-height:100px;overflow-y:auto;color:#4caf50;font-size:12px;margin-top:8px;text-align:center;line-height:1.4; }
+#lyrics { max-height:100px;overflow-y:auto;color:#FFA500;font-size:12px;margin-top:8px;text-align:center;line-height:1.4; }
 @media (max-width: 768px) {
   #music-ball { width:50px;height:50px; }
   #music-controls button { font-size:18px;margin:4px; }
